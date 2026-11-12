@@ -1,0 +1,32 @@
+---
+interface Props {
+  index?: string;
+  eyebrow: string;
+  title: string;
+  /** Část nadpisu zvýrazněná akcentem (zobrazí se na novém řádku) */
+  accent?: string;
+  id?: string;
+  class?: string;
+  align?: 'left' | 'center';
+  as?: 'h1' | 'h2';
+}
+
+const { index, eyebrow, title, accent, id, class: className, align = 'left', as: Tag = 'h2' } = Astro.props;
+---
+
+<header class:list={['max-w-3xl', align === 'center' && 'mx-auto text-center', className]}>
+  <p class="eyebrow" data-reveal>
+    {index && <span class="text-steel-400 tabular-nums">{index}</span>}
+    {eyebrow}
+  </p>
+  <Tag id={id} class="h-section mt-5" data-reveal style="--reveal-delay: 80">
+    {title}
+    {accent && (
+      <>
+        <br />
+        <span class="text-brand-500">{accent}</span>
+      </>
+    )}
+  </Tag>
+  <slot />
+</header>

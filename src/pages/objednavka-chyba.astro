@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config/site';
+---
+
+<Base title="Objednávku se nepodařilo odeslat" noindex>
+  <section class="bg-grid flex min-h-[80svh] items-center bg-ink-950 pt-[var(--header-h)]">
+    <div class="container-site max-w-3xl py-20">
+      <h1 class="text-[clamp(2.5rem,6vw,5rem)]">Objednávku se<br /><span class="text-brand-500">nepodařilo odeslat.</span></h1>
+      <p class="lead mt-6">
+        Formulář se nepodařilo zpracovat – buď chybí některý povinný údaj, nebo online odesílání zatím není nakonfigurováno.
+        Objednejte se prosím telefonicky, případně to zkuste znovu.
+      </p>
+      <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+        {site.phones.map((p) => <a href={p.href} class="btn btn-primary"><Icon name="phone" />{p.display}</a>)}
+        <a href="/#objednat" class="btn btn-ghost">Zpět na formulář</a>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,17 @@
+---
+import Horizontal from '../assets/brand/logo-horizontal.svg';
+import Stacked from '../assets/brand/logo-stacked.svg';
+import Symbol from '../assets/brand/logo-symbol.svg';
+
+interface Props {
+  variant?: 'horizontal' | 'stacked' | 'symbol';
+  class?: string;
+  /** Na tmavém pozadí se černé části loga vykreslí v barvě textu (currentColor). */
+  title?: string;
+}
+
+const { variant = 'horizontal', class: className, title = 'Autoservis Petr Tuček' } = Astro.props;
+const Cmp = variant === 'stacked' ? Stacked : variant === 'symbol' ? Symbol : Horizontal;
+---
+
+<Cmp class={className} fill="currentColor" role="img" aria-label={title} />

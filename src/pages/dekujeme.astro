@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { primaryPhone } from '../config/site';
+---
+
+<Base title="Děkujeme za objednávku" noindex>
+  <section class="bg-grid flex min-h-[80svh] items-center bg-ink-950 pt-[var(--header-h)]">
+    <div class="container-site max-w-3xl py-20">
+      <span class="inline-flex size-16 items-center justify-center bg-brand text-white"><Icon name="check" size={32} /></span>
+      <h1 class="mt-8 text-[clamp(2.75rem,7vw,5.5rem)]">Děkujeme.<br /><span class="text-brand-500">Objednávku máme.</span></h1>
+      <p class="lead mt-6">Ozveme se vám co nejdříve a termín potvrdíme. Pokud spěcháte, zavolejte nám.</p>
+      <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+        <a href="/" class="btn btn-primary">Zpět na úvod</a>
+        <a href={primaryPhone.href} class="btn btn-ghost"><Icon name="phone" class="text-brand-500" />{primaryPhone.display}</a>
+      </div>
+    </div>
+  </section>
+</Base>

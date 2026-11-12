@@ -1,0 +1,67 @@
+---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  accent?: string;
+  lead?: string;
+  image?: ImageMetadata;
+  imageAlt?: string;
+  breadcrumbs?: { label: string; href?: string }[];
+}
+
+const { eyebrow, title, accent, lead, image, imageAlt = '', breadcrumbs = [] } = Astro.props;
+---
+
+<section class="relative isolate overflow-hidden bg-ink-950 pt-[calc(var(--header-h)+4rem)] pb-16 lg:pt-[calc(var(--header-h)+6rem)] lg:pb-24">
+  {
+    image && (
+      <>
+        <Picture
+          src={image}
+          alt={imageAlt}
+          formats={['avif', 'webp']}
+          layout="full-width"
+          priority
+          quality={55}
+          widths={[480, 768, 1080, 1440, 1600]}
+          sizes="100vw"
+          class="hero-img absolute inset-0 -z-20 h-full w-full object-cover"
+        />
+        <div class="absolute inset-0 -z-10 bg-gradient-to-r from-ink-950 via-ink-950/85 to-ink-950/40" aria-hidden="true" />
+        <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950 to-transparent" aria-hidden="true" />
+      </>
+    )
+  }
+  <div class="bg-grid absolute inset-0 -z-10 opacity-40" aria-hidden="true"></div>
+
+  <div class="container-site">
+    {
+      breadcrumbs.length > 0 && (
+        <nav aria-label="Drobečková navigace" class="hero-in mb-10 text-xs uppercase tracking-[0.16em] text-steel-400">
+          <ol class="flex flex-wrap items-center gap-2">
+            {breadcrumbs.map((b, i) => (
+              <li class="flex items-center gap-2">
+                {i > 0 && <span aria-hidden="true">/</span>}
+                {b.href ? (
+                  <a href={b.href} class="inline-block py-2 hover:text-white">{b.label}</a>
+                ) : (
+                  <span aria-current="page" class="text-steel-200">{b.label}</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+    <p class="hero-in eyebrow" style="--d: 80">{eyebrow}</p>
+    <h1 class="hero-in mt-6 max-w-5xl text-[clamp(2.75rem,7vw,6.5rem)] font-bold leading-[0.9]" style="--d: 180">
+      {title}
+      {accent && (<><br /><span class="text-brand-500">{accent}</span></>)}
+    </h1>
+    {lead && <p class="hero-in lead mt-8 max-w-2xl" style="--d: 300">{lead}</p>}
+    <slot />
+  </div>
+</section>

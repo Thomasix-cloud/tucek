@@ -1,0 +1,104 @@
+---
+import { nav, site, primaryPhone } from '../config/site';
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+---
+
+<header
+  id="site-header"
+  class="group/header fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500 data-[scrolled=true]:border-white/8 data-[scrolled=true]:bg-ink-950/85 data-[scrolled=true]:backdrop-blur-xl border-b border-transparent"
+>
+  <div class="container-site flex h-[var(--header-h)] items-center justify-between gap-6">
+    <a href="/" class="relative z-10 block shrink-0 text-white" aria-label={`${site.brand} – úvodní stránka`}>
+      <Logo class="h-8 w-auto sm:h-9" />
+    </a>
+
+    <nav aria-label="Hlavní navigace" class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="relative px-3.5 py-2 font-display text-[0.95rem] font-semibold uppercase tracking-[0.14em] text-steel-200 transition-colors hover:text-white after:absolute after:inset-x-3.5 after:bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-brand-500 after:transition-transform after:duration-300 hover:after:scale-x-100"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a
+        href={primaryPhone.href}
+        class="hidden items-center gap-2.5 px-3 py-2 font-display text-lg font-semibold tracking-wide text-white transition-colors hover:text-brand-400 md:inline-flex"
+      >
+        <Icon name="phone" size={18} class="text-brand-500" />
+        {primaryPhone.display}
+      </a>
+      <a href="/#objednat" class="btn btn-primary hidden min-h-11 px-5 text-sm sm:inline-flex">Objednat servis</a>
+
+      <button
+        type="button"
+        id="menu-toggle"
+        class="relative z-10 inline-flex size-11 items-center justify-center border border-white/15 text-white lg:hidden"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+      >
+        <span class="sr-only">Otevřít menu</span>
+        <Icon name="menu" class="menu-open" />
+        <Icon name="close" class="menu-close hidden" />
+      </button>
+    </div>
+  </div>
+
+</header>
+
+<!-- Mimo <header>: backdrop-filter hlavičky by jinak omezil position:fixed na její výšku -->
+<div
+    id="mobile-menu"
+    class="fixed inset-0 z-[45] hidden flex-col overflow-y-auto overscroll-contain bg-ink-950 pt-[var(--header-h)] lg:hidden data-[open=true]:flex"
+    data-open="false"
+  >
+    <div class="bg-grid absolute inset-0 opacity-60" aria-hidden="true"></div>
+    <nav aria-label="Mobilní navigace" class="container-site relative flex flex-1 flex-col justify-between gap-8 pt-8 pb-10">
+      <ul class="border-t border-white/10">
+        {
+          nav.map((item, i) => (
+            <li class="border-b border-white/10">
+              <a
+                href={item.href}
+                class="flex items-center justify-between py-5 font-display text-4xl font-semibold uppercase text-white"
+                data-menu-link
+              >
+                <span>
+                  <span class="mr-4 align-middle text-sm text-steel-400 tabular-nums">0{i + 1}</span>
+                  {item.label}
+                </span>
+                <Icon name="arrow" class="text-brand-500" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="grid gap-3 pt-8">
+        {
+          site.phones.map((p) => (
+            <a href={p.href} class="btn btn-ghost w-full justify-between">
+              <span class="inline-flex items-center gap-3">
+                <Icon name="phone" class="text-brand-500" />
+                {p.display}
+              </span>
+              <span class="text-xs text-steel-300">Zavolat</span>
+            </a>
+          ))
+        }
+        <a href="/#objednat" class="btn btn-primary w-full" data-menu-link>
+          Objednat servis <Icon name="arrow" class="arrow" />
+        </a>
+      </div>
+    </nav>
+  </div>
+

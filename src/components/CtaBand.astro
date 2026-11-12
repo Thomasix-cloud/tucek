@@ -1,0 +1,29 @@
+---
+import { primaryPhone } from '../config/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  title?: string;
+  text?: string;
+}
+const { title = 'Potřebujete servis?', text = 'Zavolejte nám nebo se objednejte online. Termín domluvíme rychle.' } = Astro.props;
+---
+
+<section class="relative overflow-hidden bg-brand py-16 lg:py-20">
+  <div class="pointer-events-none absolute inset-0 opacity-20 [background:repeating-linear-gradient(-55deg,transparent_0_22px,rgb(0_0_0/0.25)_22px_24px)]" aria-hidden="true"></div>
+  <div class="container-site relative flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
+    <div>
+      <h2 class="text-[clamp(2.25rem,5vw,4rem)]">{title}</h2>
+      <p class="mt-3 max-w-xl text-white/85">{text}</p>
+    </div>
+    <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+      <a href={primaryPhone.href} class="btn btn-light">
+        <Icon name="phone" />
+        {primaryPhone.display}
+      </a>
+      <a href="/#objednat" class="btn border border-white/50 text-white hover:bg-white/10">
+        Objednat online <Icon name="arrow" class="arrow" />
+      </a>
+    </div>
+  </div>
+</section>

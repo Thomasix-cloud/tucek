@@ -1,0 +1,80 @@
+---
+import { Picture } from 'astro:assets';
+import heroImg from '../assets/placeholder/hero-bmw.jpg';
+import { site, primaryPhone, fullAddress } from '../config/site';
+import Icon from './Icon.astro';
+---
+
+<section id="uvod" class="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-ink-950" aria-labelledby="hero-title">
+  <div class="absolute inset-0 -z-10" data-parallax>
+    <Picture
+      src={heroImg}
+      alt="Tmavé BMW v přítmí dílny – Autoservis Petr Tuček"
+      formats={['avif', 'webp']}
+      layout="full-width"
+      priority
+      quality={70}
+      widths={[640, 960, 1280, 1600, 1920, 2400]}
+      class="hero-img h-full w-full object-cover object-[70%_50%] lg:object-center"
+    />
+  </div>
+  <!-- Ztmavení pro čitelnost textu -->
+  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-ink-950 via-ink-950/75 to-ink-950/10" aria-hidden="true"></div>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950 via-transparent to-ink-950/60" aria-hidden="true"></div>
+  <div class="bg-grid absolute inset-0 -z-10 opacity-40 [mask-image:linear-gradient(to_right,black,transparent_60%)]" aria-hidden="true"></div>
+
+  <div class="hero-compact container-site relative flex flex-1 flex-col justify-center pt-[calc(var(--header-h)+3rem)] pb-16">
+    <div class="max-w-4xl">
+      <p class="hero-in eyebrow" style="--d: 100">Autoservis · Malešovice u Brna</p>
+
+      <h1 id="hero-title" class="h-display mt-6">
+        <span class="hero-in block" style="--d: 200">Precizní servis.</span>
+        <span class="hero-in block text-brand-500" style="--d: 320">Bez kompromisů.</span>
+      </h1>
+
+      <p class="hero-in lead mt-8 max-w-xl" style="--d: 450">
+        Profesionální servis a opravy automobilů. Zkušený tým, moderní vybavení a péče, na kterou se můžete spolehnout.
+      </p>
+
+      <div class="hero-in hero-cta mt-10 flex flex-col gap-3 sm:flex-row" style="--d: 560">
+        <a href="#objednat" class="btn btn-primary">
+          Objednat do servisu
+          <Icon name="arrow" class="arrow" />
+        </a>
+        <a href={primaryPhone.href} class="btn btn-ghost">
+          <Icon name="phone" class="text-brand-500" />
+          Zavolat nám
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spodní informační lišta -->
+  <div class="hero-in relative border-t border-white/10 bg-ink-950/60 backdrop-blur-md" style="--d: 700">
+    <ul class="container-site grid grid-cols-1 divide-white/10 sm:grid-cols-3 sm:divide-x">
+      <li class="flex items-center gap-4 py-5 sm:pr-6">
+        <Icon name="pin" class="shrink-0 text-brand-500" />
+        <div>
+          <p class="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-steel-400">Provozovna</p>
+          <p class="mt-0.5 text-sm text-white">
+            <a href={site.maps.google} target="_blank" rel="noopener" class="hover:text-brand-400">{fullAddress}</a>
+          </p>
+        </div>
+      </li>
+      <li class="hidden items-center gap-4 py-5 sm:flex sm:px-6">
+        <Icon name="clock" class="shrink-0 text-brand-500" />
+        <div>
+          <p class="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-steel-400">Otevřeno</p>
+          <p class="mt-0.5 text-sm text-white">{site.hours[0].days}: {site.hours[0].time}</p>
+        </div>
+      </li>
+      <li class="hidden items-center gap-4 py-5 sm:flex sm:pl-6">
+        <Icon name="car" class="shrink-0 text-brand-500" />
+        <div>
+          <p class="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-steel-400">Specializace</p>
+          <p class="mt-0.5 text-sm text-white">BMW · koncern VW</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>

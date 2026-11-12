@@ -1,0 +1,112 @@
+---
+import { getCollection } from 'astro:content';
+import { nav, site, fullAddress } from '../config/site';
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+
+const services = (await getCollection('sluzby')).sort((a, b) => a.data.order - b.data.order);
+const socials = [
+  { key: 'facebook', label: 'Facebook', href: site.social.facebook },
+  { key: 'instagram', label: 'Instagram', href: site.social.instagram },
+  { key: 'google', label: 'Google', href: site.social.google },
+] as const;
+const year = new Date().getFullYear();
+---
+
+<footer class="relative overflow-hidden border-t border-white/8 bg-ink-950">
+  <div class="bg-grid pointer-events-none absolute inset-0 opacity-50" aria-hidden="true"></div>
+  <div class="container-site relative">
+    <div class="grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-12 lg:py-20">
+      <div class="lg:col-span-4">
+        <a href="/" class="inline-block text-white" aria-label={site.brand}>
+          <Logo class="h-10 w-auto" />
+        </a>
+        <p class="mt-6 max-w-sm text-sm leading-relaxed text-steel-300">
+          Servis a opravy osobních automobilů v Malešovicích u Brna. Specializace na BMW a vozy koncernu VW.
+        </p>
+        <div class="mt-6 flex gap-2">
+          {
+            socials.filter((s) => s.href).map((s) => (
+              <a
+                href={s.href}
+                class="inline-flex size-11 items-center justify-center border border-white/15 text-steel-200 transition-colors hover:border-brand-500 hover:text-white"
+                aria-label={s.label}
+                target="_blank"
+                rel="noopener"
+              >
+                <Icon name={s.key} size={20} />
+              </a>
+            ))
+          }
+        </div>
+      </div>
+
+      <nav aria-label="Navigace v patičce" class="lg:col-span-2">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.2em] text-steel-400">Menu</p>
+        <ul class="mt-4 grid gap-0.5 text-sm">
+          {nav.map((item) => <li><a href={item.href} class="inline-block py-1.5 text-steel-200 hover:text-white">{item.label}</a></li>)}
+          <li><a href="/specializace-bmw-vw" class="inline-block py-1.5 text-steel-200 hover:text-white">Specializace BMW &amp; VW</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Služby" class="lg:col-span-3">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.2em] text-steel-400">Služby</p>
+        <ul class="mt-4 grid gap-0.5 text-sm">
+          {
+            services.map((s) => (
+              <li>
+                <a href={`/sluzby/${s.id}`} class="inline-block py-1.5 text-steel-200 hover:text-white">{s.data.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="lg:col-span-3">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.2em] text-steel-400">Kontakt</p>
+        <address class="mt-4 grid gap-1 text-sm not-italic text-steel-200">
+          <a href={site.maps.google} target="_blank" rel="noopener" class="flex gap-3 py-1.5 hover:text-white">
+            <Icon name="pin" size={18} class="mt-0.5 shrink-0 text-brand-500" />
+            {fullAddress}
+          </a>
+          {
+            site.phones.map((p) => (
+              <a href={p.href} class="flex gap-3 py-1.5 hover:text-white">
+                <Icon name="phone" size={18} class="mt-0.5 shrink-0 text-brand-500" />
+                {p.display}
+              </a>
+            ))
+          }
+          {
+            site.email && (
+              <a href={`mailto:${site.email}`} class="flex gap-3 py-1.5 hover:text-white">
+                <Icon name="mail" size={18} class="mt-0.5 shrink-0 text-brand-500" />
+                {site.email}
+              </a>
+            )
+          }
+          {
+            site.hours.map((h) => (
+              <p class="flex gap-3 py-1.5">
+                <Icon name="clock" size={18} class="mt-0.5 shrink-0 text-brand-500" />
+                <span>
+                  {h.days}: <span class="text-white">{h.time}</span>
+                </span>
+              </p>
+            ))
+          }
+        </address>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4 border-t border-white/8 py-8 text-xs text-steel-400 md:flex-row md:items-center md:justify-between">
+      <p>
+        © {year} {site.legalName} · IČO {site.ico} · DIČ {site.dic} · Sídlo: {site.registeredOffice}
+      </p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2">
+        <li><a href="/ochrana-osobnich-udaju" class="inline-block py-2 hover:text-white">Ochrana osobních údajů</a></li>
+        <li><a href="/sitemap-index.xml" class="inline-block py-2 hover:text-white">Mapa stránek</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>

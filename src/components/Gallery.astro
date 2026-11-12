@@ -1,0 +1,129 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { gallery } from '../data/gallery';
+import Icon from './Icon.astro';
+
+const items = await Promise.all(
+  gallery.map(async (g) => ({
+    ...g,
+    full: (await getImage({ src: g.src, width: 1800, format: 'webp', quality: 75 })).src,
+  })),
+);
+---
+
+<section id="galerie" class="relative bg-ink-950 py-24 lg:py-32" aria-labelledby="galerie-title">
+  <div class="container-site">
+    <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+      <div>
+        <p class="eyebrow" data-reveal><span class="text-steel-400 tabular-nums">05</span>Galerie</p>
+        <h2 id="galerie-title" class="h-section mt-5" data-reveal style="--reveal-delay: 80">
+          Z naší dílny.
+        </h2>
+      </div>
+      <p class="lead max-w-md lg:text-right" data-reveal style="--reveal-delay: 150">
+        Nahlédněte, jak to u nás vypadá a na čem pracujeme.
+      </p>
+    </div>
+
+    <ul class="mt-14 columns-1 gap-3 sm:columns-2 lg:mt-20 lg:columns-3 [&>li]:mb-3" data-gallery>
+      {
+        items.map((g, i) => (
+          <li class="break-inside-avoid" data-reveal="fade" style={`--reveal-delay: ${(i % 3) * 80}`}>
+            <button
+              type="button"
+              class="group relative block w-full overflow-hidden bg-ink-800 text-left"
+              data-full={g.full}
+              data-alt={g.alt}
+              data-index={i}
+              aria-label={`Zvětšit fotografii: ${g.alt}`}
+            >
+              <Image
+                src={g.src}
+                alt={g.alt}
+                widths={[400, 600, 800]}
+                sizes="(min-width: 1024px) 28vw, (min-width: 640px) 45vw, 100vw"
+                quality={60}
+                class="h-auto w-full transition-[transform,filter] duration-[1.2s] ease-out-expo group-hover:scale-[1.04] group-hover:brightness-110"
+              />
+              <span class="absolute inset-0 flex items-end justify-between bg-gradient-to-t from-ink-950/80 to-transparent p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100">
+                <span class="text-sm text-white">{g.alt}</span>
+                <Icon name="zoom" class="text-white" />
+              </span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <dialog
+    id="lightbox"
+    class="m-0 h-dvh max-h-none w-screen max-w-none bg-ink-950/95 p-0 text-white backdrop:bg-black/80 open:flex open:items-center open:justify-center"
+    aria-label="Galerie – zvětšená fotografie"
+  >
+    <figure class="flex max-h-full w-full flex-col items-center gap-4 px-4 py-20 sm:px-20">
+      <img data-lb-img alt="" class="max-h-[78vh] w-auto max-w-full object-contain" decoding="async" />
+      <figcaption data-lb-caption class="text-center text-sm text-steel-300"></figcaption>
+    </figure>
+    <button type="button" data-lb-close class="absolute top-4 right-4 inline-flex size-12 items-center justify-center border border-white/20 hover:bg-white/10" aria-label="Zavřít">
+      <Icon name="close" />
+    </button>
+    <button type="button" data-lb-prev class="absolute top-1/2 left-2 inline-flex size-12 -translate-y-1/2 rotate-180 items-center justify-center border border-white/20 hover:bg-white/10 sm:left-6" aria-label="Předchozí fotografie">
+      <Icon name="chevron" />
+    </button>
+    <button type="button" data-lb-next class="absolute top-1/2 right-2 inline-flex size-12 -translate-y-1/2 items-center justify-center border border-white/20 hover:bg-white/10 sm:right-6" aria-label="Další fotografie">
+      <Icon name="chevron" />
+    </button>
+  </dialog>
+</section>
+
+<script>
+  const dialog = document.getElementById('lightbox') as HTMLDialogElement | null;
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-gallery] button[data-full]'));
+  if (dialog && buttons.length) {
+    const img = dialog.querySelector<HTMLImageElement>('[data-lb-img]')!;
+    const caption = dialog.querySelector<HTMLElement>('[data-lb-caption]')!;
+    let current = 0;
+    let opener: HTMLElement | null = null;
+
+    const show = (i: number) => {
+      current = (i + buttons.length) % buttons.length;
+      const b = buttons[current];
+      img.src = b.dataset.full!;
+      img.alt = b.dataset.alt ?? '';
+      caption.textContent = `${current + 1} / ${buttons.length} — ${b.dataset.alt ?? ''}`;
+    };
+
+    buttons.forEach((b, i) =>
+      b.addEventListener('click', () => {
+        opener = b;
+        show(i);
+        dialog.showModal();
+      }),
+    );
+    dialog.querySelector('[data-lb-close]')!.addEventListener('click', () => dialog.close());
+    dialog.querySelector('[data-lb-prev]')!.addEventListener('click', () => show(current - 1));
+    dialog.querySelector('[data-lb-next]')!.addEventListener('click', () => show(current + 1));
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog || (e.target as HTMLElement).tagName === 'FIGURE') dialog.close();
+    });
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') show(current + 1);
+      if (e.key === 'ArrowLeft') show(current - 1);
+    });
+    dialog.addEventListener('close', () => opener?.focus());
+
+    // Swipe prstem na mobilu
+    let startX = 0;
+    let startY = 0;
+    dialog.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    dialog.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) show(current + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+  }
+</script>

@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { primaryPhone } from '../config/site';
+import SectionHeading from './SectionHeading.astro';
+import Icon from './Icon.astro';
+
+const services = (await getCollection('sluzby')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section id="sluzby" class="relative bg-ink-900 py-24 lg:py-32" aria-labelledby="sluzby-title">
+  <div class="container-site">
+    <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+      <SectionHeading id="sluzby-title" index="01" eyebrow="Naše služby" title="Kompletní péče" accent="o váš vůz." />
+      <p class="lead max-w-md lg:text-right" data-reveal style="--reveal-delay: 150">
+        Od pravidelného servisu po hledání složitých závad. Vše pod jednou střechou v Malešovicích.
+      </p>
+    </div>
+
+    <ul class="mt-14 grid gap-3 sm:grid-cols-2 lg:mt-20 lg:grid-cols-12 lg:grid-rows-[repeat(2,minmax(16rem,auto))_auto]">
+      {
+        services.map((s, i) => {
+          const big = i === 0;
+          const wide = i >= 5;
+          return (
+            <li
+              class:list={[
+                'group relative',
+                big && 'sm:col-span-2 lg:col-span-6 lg:row-span-2',
+                !big && !wide && 'lg:col-span-3',
+                wide && 'lg:col-span-4',
+              ]}
+              data-reveal
+              style={`--reveal-delay: ${i * 70}`}
+            >
+              <a
+                href={`/sluzby/${s.id}`}
+                class:list={[
+                  'relative flex h-full flex-col justify-end overflow-hidden bg-ink-800 p-6 sm:p-7',
+                  big ? 'min-h-[26rem] lg:min-h-full lg:p-10' : 'min-h-[18rem]',
+                ]}
+              >
+                <Image
+                  src={s.data.image}
+                  alt=""
+                  widths={big ? [640, 960, 1280] : [480, 720, 960]}
+                  sizes={big ? '(min-width: 1024px) 50vw, 100vw' : '(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw'}
+                  quality={65}
+                  class="absolute inset-0 h-full w-full object-cover opacity-55 grayscale-[35%] transition-[transform,opacity,filter] duration-[1.2s] ease-out-expo group-hover:scale-105 group-hover:opacity-70 group-hover:grayscale-0"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/10" aria-hidden="true" />
+                <span class="absolute top-6 left-6 font-display text-sm font-semibold tracking-[0.2em] text-steel-300 tabular-nums sm:top-7 sm:left-7">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span class="absolute top-5 right-5 inline-flex size-11 items-center justify-center border border-white/15 text-white transition-colors duration-300 group-hover:border-brand group-hover:bg-brand">
+                  <Icon name="arrow-up-right" size={20} />
+                </span>
+
+                <div class="relative">
+                  <h3 class:list={[big ? 'text-4xl sm:text-5xl lg:text-6xl' : 'text-3xl']}>{s.data.title}</h3>
+                  <p class:list={['mt-3 text-sm leading-relaxed text-steel-200', big ? 'max-w-md sm:text-base' : 'max-w-xs']}>
+                    {s.data.teaser}
+                  </p>
+                  {big && (
+                    <ul class="mt-6 hidden gap-2 text-sm text-steel-100 sm:grid">
+                      {s.data.highlights.map((h) => (
+                        <li class="flex items-center gap-3">
+                          <Icon name="check" size={16} class="text-brand-500" />
+                          {h}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <span class="mt-6 block h-px w-12 bg-brand-500 transition-[width] duration-700 ease-out-expo group-hover:w-full" aria-hidden="true" />
+                </div>
+              </a>
+            </li>
+          );
+        })
+      }
+
+      <li class="relative lg:col-span-4" data-reveal style="--reveal-delay: 500">
+        <div class="flex h-full min-h-[18rem] flex-col justify-between border border-white/10 bg-ink-850 p-6 sm:p-7">
+          <div>
+            <p class="eyebrow">Nevíte si rady?</p>
+            <p class="mt-4 font-display text-3xl font-semibold uppercase leading-none text-white">
+              Popište nám problém, poradíme.
+            </p>
+          </div>
+          <div class="mt-8 grid gap-3">
+            <a href={primaryPhone.href} class="btn btn-light w-full justify-between">
+              <span class="inline-flex items-center gap-3"><Icon name="phone" />{primaryPhone.display}</span>
+              <Icon name="arrow" class="arrow" />
+            </a>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>

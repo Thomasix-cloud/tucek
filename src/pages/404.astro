@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<Base title="Stránka nenalezena" noindex>
+  <section class="bg-grid relative flex min-h-[85svh] items-center overflow-hidden bg-ink-950 pt-[var(--header-h)]">
+    <span class="pointer-events-none absolute -right-8 bottom-0 font-display text-[40vw] leading-none font-bold text-white/[0.03] select-none" aria-hidden="true">404</span>
+    <div class="container-site relative py-20">
+      <p class="eyebrow">Chyba 404</p>
+      <h1 class="mt-6 text-[clamp(2.75rem,7vw,6rem)]">Tady nic<br /><span class="text-brand-500">neopravujeme.</span></h1>
+      <p class="lead mt-6 max-w-xl">Stránka, kterou hledáte, neexistuje nebo byla přesunuta.</p>
+      <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+        <a href="/" class="btn btn-primary">Zpět na úvod <Icon name="arrow" class="arrow" /></a>
+        <a href="/#sluzby" class="btn btn-ghost">Naše služby</a>
+      </div>
+    </div>
+  </section>
+</Base>

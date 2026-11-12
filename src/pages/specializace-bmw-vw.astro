@@ -1,0 +1,74 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import heroImg from '../assets/placeholder/bmw-svetla.jpg';
+import bmw from '../assets/placeholder/bmw-cerne.jpg';
+import vw from '../assets/placeholder/vw-golf.jpg';
+import { primaryPhone } from '../config/site';
+
+const blocks = [
+  {
+    id: 'bmw',
+    title: 'BMW',
+    img: bmw,
+    alt: 'Černé BMW před dílnou',
+    text: [
+      'Vozy BMW k nám jezdí nejčastěji. Známe jejich techniku, servisní postupy i slabá místa jednotlivých motorizací – a víme, na co se při servisu zaměřit.',
+      'Postaráme se o pravidelný servis, diagnostiku, opravy podvozku, motoru i elektroinstalace.',
+    ],
+  },
+  {
+    id: 'vw',
+    title: 'Koncern VW',
+    img: vw,
+    alt: 'Volkswagen Golf v garáži',
+    text: [
+      'Volkswagen, Škoda, Audi, SEAT i Cupra sdílejí řadu platforem, motorů a elektroniky. Díky tomu dokážeme závady na vozech koncernu VW rychle najít a opravit.',
+      'Postaráme se o pravidelný servis, diagnostiku i opravy.',
+    ],
+  },
+];
+---
+
+<Base
+  title="Specializace BMW a koncern VW"
+  description="Servis a opravy BMW, Volkswagen, Škoda, Audi, SEAT a Cupra v Malešovicích u Brna. Diagnostika, údržba i opravy od mechaniků, kteří tyto vozy znají."
+>
+  <PageHero
+    eyebrow="Specializace"
+    title="BMW a koncern VW."
+    accent="Známe je do detailu."
+    lead="Opravujeme osobní automobily všech značek. Nejvíce zkušeností ale máme s vozy BMW a koncernu Volkswagen."
+    image={heroImg}
+    imageAlt="Světla BMW ve tmě"
+    breadcrumbs={[{ label: 'Úvod', href: '/' }, { label: 'Specializace' }]}
+  />
+
+  {
+    blocks.map((b, i) => (
+      <section id={b.id} class:list={['py-20 lg:py-28', i % 2 ? 'bg-ink-950' : 'bg-ink-900']}>
+        <div class="container-site grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+          <div class:list={['crop-marks aspect-[4/3]', i % 2 && 'lg:order-2']} data-reveal="clip">
+            <Image src={b.img} alt={b.alt} widths={[640, 960, 1280]} sizes="(min-width: 1024px) 50vw, 100vw" quality={65} class="h-full w-full object-cover" />
+          </div>
+          <div>
+            <p class="eyebrow" data-reveal>Specializace</p>
+            <h2 class="h-section mt-5" data-reveal style="--reveal-delay: 80">{b.title}</h2>
+            <div class="mt-8 grid gap-4 leading-relaxed text-steel-200" data-reveal style="--reveal-delay: 150">
+              {b.text.map((t) => <p>{t}</p>)}
+            </div>
+            <div class="mt-10 flex flex-col gap-3 sm:flex-row" data-reveal style="--reveal-delay: 220">
+              <a href="/#objednat" class="btn btn-primary">Objednat do servisu <Icon name="arrow" class="arrow" /></a>
+              <a href={primaryPhone.href} class="btn btn-ghost"><Icon name="phone" class="text-brand-500" />{primaryPhone.display}</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    ))
+  }
+
+  <CtaBand title="Jezdíte BMW nebo VW?" text="Ozvěte se nám – rádi poradíme s údržbou i řešením konkrétní závady." />
+</Base>

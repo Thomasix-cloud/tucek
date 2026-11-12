@@ -1,0 +1,73 @@
+---
+import { Image } from 'astro:assets';
+import mechanic from '../assets/placeholder/mechanik-pod-autem.jpg';
+import Icon from './Icon.astro';
+import type { IconName } from './Icon.astro';
+
+const pillars: { icon: IconName; title: string; text: string }[] = [
+  {
+    icon: 'wrench',
+    title: 'Odborný přístup',
+    text: 'Závadu nejdřív najdeme a ověříme. Neměníme díly naslepo a nepřidáváme práce, které nejsou potřeba.',
+  },
+  {
+    icon: 'gauge',
+    title: 'Moderní vybavení',
+    text: 'Počítačová diagnostika, měření geometrie a vybavení pro servis klimatizace přímo v dílně.',
+  },
+  {
+    icon: 'euro',
+    title: 'Férové jednání',
+    text: 'Cenu i rozsah opravy víte předem. Pokud se během práce objeví něco navíc, nejdřív vám zavoláme.',
+  },
+  {
+    icon: 'chat',
+    title: 'Srozumitelná komunikace',
+    text: 'Vysvětlíme, co se s autem děje, co je nutné opravit hned a co může počkat.',
+  },
+];
+---
+
+<section id="proc-my" class="relative bg-paper py-24 text-ink-900 lg:py-32" aria-labelledby="proc-title">
+  <div class="container-site grid gap-14 lg:grid-cols-12 lg:gap-16">
+    <div class="lg:col-span-5">
+      <div class="lg:sticky lg:top-28">
+        <p class="eyebrow !text-brand" data-reveal><span class="text-ink-500 tabular-nums">03</span>Proč právě my</p>
+        <h2 id="proc-title" class="h-section mt-5 !text-ink-900" data-reveal style="--reveal-delay: 80">
+          Auto svěřujete lidem,
+          <br /><span class="text-brand">ne lince.</span>
+        </h2>
+        <p class="mt-6 max-w-md leading-relaxed text-ink-600" data-reveal style="--reveal-delay: 150">
+          Jsme menší autoservis, kde se k vašemu vozu dostane vždy zkušený mechanik. Žádné anonymní přijímací okénko.
+        </p>
+        <div class="crop-marks mt-10 hidden aspect-[4/3] lg:block" data-reveal="clip">
+          <Image
+            src={mechanic}
+            alt="Mechanik pracuje pod automobilem"
+            widths={[480, 720, 960]}
+            sizes="(min-width: 1024px) 35vw, 100vw"
+            quality={65}
+            class="h-full w-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
+
+    <ol class="grid gap-px self-start bg-ink-900/12 sm:grid-cols-2 lg:col-span-7">
+      {
+        pillars.map((p, i) => (
+          <li class="group relative bg-paper p-8 transition-colors duration-500 hover:bg-white sm:p-10" data-reveal style={`--reveal-delay: ${i * 90}`}>
+            <span class="absolute top-8 right-8 font-display text-sm font-semibold tracking-[0.2em] text-ink-500 tabular-nums">
+              0{i + 1}
+            </span>
+            <span class="inline-flex size-14 items-center justify-center bg-ink-900 text-white transition-colors duration-500 group-hover:bg-brand">
+              <Icon name={p.icon} size={26} />
+            </span>
+            <h3 class="mt-8 text-3xl !text-ink-900">{p.title}</h3>
+            <p class="mt-4 leading-relaxed text-ink-600">{p.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

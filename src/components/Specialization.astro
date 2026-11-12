@@ -1,0 +1,97 @@
+---
+import { Image } from 'astro:assets';
+import bmw from '../assets/placeholder/bmw-cerne.jpg';
+import vw from '../assets/placeholder/vw-golf.jpg';
+import Icon from './Icon.astro';
+
+const brands = ['BMW', 'Volkswagen', 'Škoda', 'Audi', 'SEAT', 'Cupra'];
+const cards = [
+  {
+    key: 'BMW',
+    title: 'BMW',
+    text: 'Servis, diagnostika a opravy vozů BMW. Známe jejich techniku i typické slabiny jednotlivých motorizací.',
+    img: bmw,
+    alt: 'Černé BMW zaparkované před dílnou',
+    pos: 'object-[50%_62%]',
+  },
+  {
+    key: 'VW',
+    title: 'Koncern VW',
+    text: 'Volkswagen, Škoda, Audi, SEAT a Cupra. Společné platformy, společné know-how – a rychlé řešení závad.',
+    img: vw,
+    alt: 'Volkswagen Golf v podzemní garáži',
+    pos: 'object-[50%_60%]',
+  },
+];
+---
+
+<section id="specializace" class="relative overflow-hidden bg-ink-950 py-24 lg:py-32" aria-labelledby="spec-title">
+  <div class="container-site">
+    <div class="grid gap-10 lg:grid-cols-12 lg:items-end">
+      <div class="lg:col-span-7">
+        <p class="eyebrow" data-reveal><span class="text-steel-400 tabular-nums">02</span>Specializace</p>
+        <h2 id="spec-title" class="h-section mt-5" data-reveal style="--reveal-delay: 80">
+          Doma ve vozech
+          <br /><span class="text-brand-500">BMW a koncernu VW.</span>
+        </h2>
+      </div>
+      <p class="lead lg:col-span-5" data-reveal style="--reveal-delay: 150">
+        Opravujeme všechny značky osobních automobilů. Nejvíc zkušeností ale máme s vozy BMW a koncernu Volkswagen.
+      </p>
+    </div>
+
+    <div class="mt-14 grid gap-3 lg:mt-20 lg:grid-cols-2">
+      {
+        cards.map((c, i) => (
+          <a
+            href="/specializace-bmw-vw"
+            class="group relative isolate flex min-h-[26rem] flex-col justify-end overflow-hidden bg-ink-800 p-7 sm:min-h-[32rem] sm:p-10"
+            data-reveal
+            style={`--reveal-delay: ${i * 120}`}
+          >
+            <Image
+              src={c.img}
+              alt={c.alt}
+              widths={[640, 960, 1280]}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              quality={65}
+              class:list={['absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-105', c.pos]}
+            />
+            <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950 via-ink-950/60 to-transparent" aria-hidden="true" />
+            <span
+              class="pointer-events-none absolute -top-4 right-4 font-display text-[clamp(6rem,16vw,12rem)] font-bold leading-none text-white/[0.06] select-none"
+              aria-hidden="true"
+            >
+              {c.key}
+            </span>
+            <h3 class="text-5xl sm:text-6xl">{c.title}</h3>
+            <p class="mt-4 max-w-md text-steel-200">{c.text}</p>
+            <span class="mt-6 inline-flex items-center gap-3 font-display text-sm font-semibold uppercase tracking-[0.16em] text-white">
+              Více o specializaci
+              <Icon name="arrow" size={18} class="text-brand-500 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Pás se značkami -->
+  <div class="mt-20 border-y border-white/8 py-6 lg:mt-28">
+    <p class="sr-only">Specializace: {brands.join(', ')}</p>
+    <div class="flex w-max motion-safe:animate-marquee" aria-hidden="true">
+      {
+        [0, 1].map(() => (
+          <ul class="flex shrink-0 items-center">
+            {[...brands, ...brands].map((b) => (
+              <li class="flex items-center font-display text-3xl font-semibold uppercase tracking-[0.08em] text-steel-400 sm:text-4xl">
+                <span class="px-8">{b}</span>
+                <span class="size-1.5 rotate-45 bg-brand-500" />
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</section>

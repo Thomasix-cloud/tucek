@@ -1,0 +1,130 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Icon from '../../components/Icon.astro';
+import { site, primaryPhone } from '../../config/site';
+
+export const getStaticPaths = (async () => {
+  const services = (await getCollection('sluzby')).sort((a, b) => a.data.order - b.data.order);
+  return services.map((service) => ({ params: { slug: service.id }, props: { service, all: services } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  service: CollectionEntry<'sluzby'>;
+  all: CollectionEntry<'sluzby'>[];
+}
+
+const { service, all } = Astro.props;
+const { Content } = await render(service);
+const others = all.filter((s) => s.id !== service.id);
+const url = new URL(`/sluzby/${service.id}`, Astro.site).href;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: service.data.title,
+    description: service.data.description,
+    serviceType: service.data.title,
+    url,
+    provider: { '@id': new URL('/#autoservis', Astro.site).href },
+    areaServed: site.areaServed.map((name) => ({ '@type': 'Place', name })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Úvod', item: new URL('/', Astro.site).href },
+      { '@type': 'ListItem', position: 2, name: 'Služby', item: new URL('/#sluzby', Astro.site).href },
+      { '@type': 'ListItem', position: 3, name: service.data.title, item: url },
+    ],
+  },
+];
+---
+
+<Base title={`${service.data.title} – Malešovice u Brna`} description={service.data.description} jsonLd={jsonLd} ogImage={service.data.image}>
+  <PageHero
+    eyebrow={`Služba ${String(service.data.order).padStart(2, '0')}`}
+    title={service.data.title}
+    lead={service.data.teaser}
+    image={service.data.image}
+    imageAlt={service.data.imageAlt}
+    breadcrumbs={[{ label: 'Úvod', href: '/' }, { label: 'Služby', href: '/#sluzby' }, { label: service.data.short }]}
+  >
+    <div class="hero-in mt-10 flex flex-col gap-3 sm:flex-row" style="--d: 420">
+      <a href="/#objednat" class="btn btn-primary">Objednat do servisu <Icon name="arrow" class="arrow" /></a>
+      <a href={primaryPhone.href} class="btn btn-ghost"><Icon name="phone" class="text-brand-500" />{primaryPhone.display}</a>
+    </div>
+  </PageHero>
+
+  <section class="bg-ink-900 py-20 lg:py-28">
+    <div class="container-site grid gap-14 lg:grid-cols-12 lg:gap-16">
+      <article class="prose-service lg:col-span-7">
+        <Content />
+      </article>
+
+      <aside class="lg:col-span-5">
+        <div class="lg:sticky lg:top-28">
+          <div class="border border-white/10 bg-ink-850 p-8">
+            <p class="eyebrow">V kostce</p>
+            <ul class="mt-6 grid gap-4">
+              {
+                service.data.highlights.map((h) => (
+                  <li class="flex items-start gap-3 text-steel-100">
+                    <Icon name="check" size={20} class="mt-0.5 shrink-0 text-brand-500" />
+                    {h}
+                  </li>
+                ))
+              }
+            </ul>
+            <div class="mt-8 grid gap-3 border-t border-white/10 pt-8">
+              <a href={primaryPhone.href} class="btn btn-primary w-full"><Icon name="phone" />Zavolat {primaryPhone.display}</a>
+              <a href="/#objednat" class="btn btn-ghost w-full">Objednat online</a>
+            </div>
+            <p class="mt-6 flex items-center gap-3 text-sm text-steel-300">
+              <Icon name="clock" size={18} class="text-brand-500" />
+              {site.hours[0].days}: {site.hours[0].time}
+            </p>
+          </div>
+          <div class="crop-marks mt-10 hidden aspect-[4/3] lg:block">
+            <Image
+              src={service.data.image}
+              alt={service.data.imageAlt}
+              widths={[480, 720, 960]}
+              sizes="(min-width: 1024px) 38vw, 100vw"
+              quality={65}
+              class="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="border-t border-white/8 bg-ink-950 py-20 lg:py-24" aria-labelledby="dalsi-sluzby">
+    <div class="container-site">
+      <h2 id="dalsi-sluzby" class="text-4xl sm:text-5xl">Další služby</h2>
+      <ul class="mt-10 grid gap-px bg-white/8 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          others.map((s) => (
+            <li class="bg-ink-950">
+              <a href={`/sluzby/${s.id}`} class="group flex items-center justify-between gap-6 p-6 transition-colors hover:bg-ink-850">
+                <span>
+                  <span class="block font-display text-2xl font-semibold uppercase text-white">{s.data.short}</span>
+                  <span class="mt-1 block text-sm text-steel-400">{s.data.teaser}</span>
+                </span>
+                <Icon name="arrow" class="shrink-0 text-brand-500 transition-transform group-hover:translate-x-1" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title={`${service.data.short}? Domluvíme termín.`} />
+</Base>

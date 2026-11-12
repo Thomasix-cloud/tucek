@@ -1,0 +1,19 @@
+---
+import { primaryPhone } from '../config/site';
+import Icon from './Icon.astro';
+---
+
+<div
+  class="mobile-bar fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 border-t border-white/10 bg-ink-950/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
+  aria-label="Rychlý kontakt"
+  role="navigation"
+>
+  <a href={primaryPhone.href} class="flex h-16 items-center justify-center gap-2.5 font-display text-base font-semibold uppercase tracking-[0.12em] text-white">
+    <Icon name="phone" size={20} class="text-brand-500" />
+    Zavolat
+  </a>
+  <a href="/#objednat" class="flex h-16 items-center justify-center gap-2.5 bg-brand font-display text-base font-semibold uppercase tracking-[0.12em] text-white">
+    <Icon name="calendar" size={20} />
+    Objednat
+  </a>
+</div>

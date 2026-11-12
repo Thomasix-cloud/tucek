@@ -1,0 +1,122 @@
+---
+import '../styles/global.css';
+import { getImage } from 'astro:assets';
+import { site, fullAddress } from '../config/site';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MobileBar from '../components/MobileBar.astro';
+import ogSource from '../assets/placeholder/hero-bmw.jpg';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Doplňující JSON-LD (např. Service, BreadcrumbList) */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+  ogImage?: ImageMetadata;
+}
+
+const {
+  title,
+  description = site.description,
+  jsonLd,
+  noindex = false,
+  ogImage = ogSource,
+} = Astro.props;
+
+const fullTitle = title ? `${title} | ${site.brand}` : `${site.brand} – autoservis Malešovice u Brna`;
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', Astro.site);
+const og = await getImage({ src: ogImage, width: 1200, height: 630, format: 'jpg', fit: 'cover', quality: 80 });
+const ogUrl = new URL(og.src, Astro.site);
+
+const businessId = new URL('/#autoservis', Astro.site).href;
+const autoRepair = {
+  '@context': 'https://schema.org',
+  '@type': 'AutoRepair',
+  '@id': businessId,
+  name: site.brand,
+  legalName: site.legalName,
+  description: site.description,
+  url: new URL('/', Astro.site).href,
+  image: ogUrl.href,
+  logo: new URL('/logo.svg', Astro.site).href,
+  telephone: site.phones.map((p) => p.e164),
+  ...(site.email ? { email: site.email } : {}),
+  vatID: site.dic,
+  identifier: { '@type': 'PropertyValue', propertyID: 'IČO', value: site.ico },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    addressLocality: site.address.city,
+    postalCode: site.address.zip.replace(' ', ''),
+    addressRegion: site.address.region,
+    addressCountry: site.address.country,
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: site.address.geo.lat, longitude: site.address.geo.lng },
+  hasMap: site.maps.google,
+  openingHoursSpecification: site.hours
+    .filter((h) => h.schemaDays.length)
+    .map((h) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: h.schemaDays, opens: h.opens, closes: h.closes })),
+  areaServed: site.areaServed.map((name) => ({ '@type': 'Place', name })),
+  knowsAbout: ['BMW', 'Volkswagen', 'Škoda', 'Audi', 'SEAT', 'Cupra'],
+  sameAs: Object.values(site.social).filter(Boolean),
+};
+
+const ld = [autoRepair, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
+---
+
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta name="theme-color" content="#0d0d0f" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="cs_CZ" />
+    <meta property="og:site_name" content={site.brand} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="geo.region" content="CZ-64" />
+    <meta name="geo.placename" content={fullAddress} />
+    <meta name="geo.position" content={`${site.address.geo.lat};${site.address.geo.lng}`} />
+
+    <slot name="head" />
+    <script type="application/ld+json" set:html={JSON.stringify(ld.length === 1 ? ld[0] : ld)} />
+  </head>
+  <body class="pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
+    <a
+      href="#obsah"
+      class="sr-only z-[100] bg-brand px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      >Přeskočit na obsah</a
+    >
+    <Header />
+    <main id="obsah">
+      <slot />
+    </main>
+    <Footer />
+    <MobileBar />
+
+    <script>
+      import '../scripts/ui';
+    </script>
+  </body>
+</html>
